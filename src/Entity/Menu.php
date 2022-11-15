@@ -35,10 +35,6 @@ class Menu
 
     #[ORM\Column]
     #[Assert\NotNull()]
-    private ?bool $deleted = null;
-
-    #[ORM\Column]
-    #[Assert\NotNull()]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
@@ -49,6 +45,11 @@ class Menu
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function __toString(): string
+    {
+        return $this->getName();
     }
 
     public function getId(): ?int
@@ -100,18 +101,6 @@ class Menu
     public function setHidden(bool $hidden): self
     {
         $this->hidden = $hidden;
-
-        return $this;
-    }
-
-    public function isDeleted(): ?bool
-    {
-        return $this->deleted;
-    }
-
-    public function setDeleted(bool $deleted): self
-    {
-        $this->deleted = $deleted;
 
         return $this;
     }

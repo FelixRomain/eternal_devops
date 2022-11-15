@@ -6,6 +6,7 @@ use App\Repository\SkillRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Color;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SkillRepository::class)]
@@ -31,10 +32,6 @@ class Skill
 
     #[ORM\Column]
     #[Assert\NotNull()]
-    private ?bool $deleted = null;
-
-    #[ORM\Column]
-    #[Assert\NotNull()]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
@@ -53,6 +50,11 @@ class Skill
         $this->updatedAt = new \DateTimeImmutable();
         $this->experiences = new ArrayCollection();
         $this->formations = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->getName();
     }
 
     public function getId(): ?int
@@ -96,18 +98,6 @@ class Skill
         return $this;
     }
 
-    public function isDeleted(): ?bool
-    {
-        return $this->deleted;
-    }
-
-    public function setDeleted(bool $deleted): self
-    {
-        $this->deleted = $deleted;
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -133,27 +123,27 @@ class Skill
     }
 
     /**
-     * @return Collection<int, Experience>
+     * @return Collection<int, Experiences>
      */
     public function getExperiences(): Collection
     {
         return $this->experiences;
     }
 
-    public function addExperience(Experience $experience): self
+    public function addExperiences(Experience $experiences): self
     {
-        if (!$this->experiences->contains($experience)) {
-            $this->experiences->add($experience);
-            $experience->addSkill($this);
+        if (!$this->experiences->contains($experiences)) {
+            $this->experiences->add($experiences);
+            $experiences->addSkill($this);
         }
 
         return $this;
     }
 
-    public function removeExperience(Experience $experience): self
+    public function removeExperiences(Experience $experiences): self
     {
-        if ($this->experiences->removeElement($experience)) {
-            $experience->removeSkill($this);
+        if ($this->experiences->removeElement($experiences)) {
+            $experiences->removeSkill($this);
         }
 
         return $this;
@@ -167,20 +157,20 @@ class Skill
         return $this->formations;
     }
 
-    public function addFormation(Formation $formation): self
+    public function addFormations(Formation $formations): self
     {
-        if (!$this->formations->contains($formation)) {
-            $this->formations->add($formation);
-            $formation->addSkill($this);
+        if (!$this->formations->contains($formations)) {
+            $this->formations->add($formations);
+            $formations->addSkill($this);
         }
 
         return $this;
     }
 
-    public function removeFormation(Formation $formation): self
+    public function removeFormations(Formation $formations): self
     {
-        if ($this->formations->removeElement($formation)) {
-            $formation->removeSkill($this);
+        if ($this->formations->removeElement($formations)) {
+            $formations->removeSkill($this);
         }
 
         return $this;

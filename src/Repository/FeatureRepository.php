@@ -39,6 +39,20 @@ class FeatureRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+    * @return Feature[] Returns an array of Feature objects
+    */
+    public function findByHidden($value): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.hidden = 1')
+            ->orderBy('f.id', 'ASC')
+            ->setMaxResults(10)
+           ->getQuery()
+           ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return Feature[] Returns an array of Feature objects
 //     */

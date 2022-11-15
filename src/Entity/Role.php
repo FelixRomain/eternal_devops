@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\RoleRepository;
+use App\Entity\Color;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -29,10 +30,6 @@ class Role
 
     #[ORM\Column]
     #[Assert\NotNull()]
-    private ?bool $deleted = null;
-
-    #[ORM\Column]
-    #[Assert\NotNull()]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
@@ -43,6 +40,11 @@ class Role
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function __toString(): string
+    {
+        return $this->getName();
     }
 
     public function getId(): ?int
@@ -82,18 +84,6 @@ class Role
     public function setHidden(bool $hidden): self
     {
         $this->hidden = $hidden;
-
-        return $this;
-    }
-
-    public function isDeleted(): ?bool
-    {
-        return $this->deleted;
-    }
-
-    public function setDeleted(bool $deleted): self
-    {
-        $this->deleted = $deleted;
 
         return $this;
     }

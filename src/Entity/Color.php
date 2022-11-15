@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ColorRepository;
+use App\Entity\Feature;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,16 +21,12 @@ class Color
     #[Assert\Length(min: 2, max: 7)]
     private ?string $color = null;
 
-    #[ORM\ManyToOne(inversedBy: 'colors')]
+    #[ORM\ManyToOne(inversedBy: 'color')]
     private ?feature $features = null;
 
     #[ORM\Column]
     #[Assert\NotNull()]
     private ?bool $hidden = null;
-
-    #[ORM\Column]
-    #[Assert\NotNull()]
-    private ?bool $deleted = null;
 
     #[ORM\Column]
     #[Assert\NotNull()]
@@ -43,6 +40,11 @@ class Color
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function __toString(): string
+    {
+        return $this->getColor() . ' / ' . $this->getFeatures();
     }
 
     public function getId(): ?int
@@ -82,18 +84,6 @@ class Color
     public function setHidden(bool $hidden): self
     {
         $this->hidden = $hidden;
-
-        return $this;
-    }
-
-    public function isDeleted(): ?bool
-    {
-        return $this->deleted;
-    }
-
-    public function setDeleted(bool $deleted): self
-    {
-        $this->deleted = $deleted;
 
         return $this;
     }

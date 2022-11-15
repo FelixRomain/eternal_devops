@@ -28,24 +28,25 @@ class Feature
 
     #[ORM\Column]
     #[Assert\NotNull()]
-    private ?bool $deleted = null;
-
-    #[ORM\Column]
-    #[Assert\NotNull()]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
     #[Assert\NotNull()]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'feature', targetEntity: Color::class)]
-    private Collection $colors;
+    #[ORM\OneToMany(mappedBy: 'features', targetEntity: Color::class)]
+    private Collection $color;
 
     public function __construct()
     {
-        $this->colors = new ArrayCollection();
+        $this->color = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function __toString(): string
+    {
+        return $this->getName();
     }
 
     public function getId(): ?int
@@ -77,18 +78,6 @@ class Feature
         return $this;
     }
 
-    public function isDeleted(): ?bool
-    {
-        return $this->deleted;
-    }
-
-    public function setDeleted(bool $deleted): self
-    {
-        $this->deleted = $deleted;
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -116,16 +105,16 @@ class Feature
     /**
      * @return Collection<int, Color>
      */
-    public function getColors(): Collection
+    public function getColor(): Collection
     {
-        return $this->colors;
+        return $this->color;
     }
 
     public function addColor(Color $color): self
     {
-        if (!$this->colors->contains($color)) {
-            $this->colors->add($color);
-            $color->setFeature($this);
+        if (!$this->color->contains($color)) {
+            $this->color->add($color);
+            $color->setFeatures($this);
         }
 
         return $this;
@@ -133,10 +122,10 @@ class Feature
 
     public function removeColor(Color $color): self
     {
-        if ($this->colors->removeElement($color)) {
+        if ($this->color->removeElement($color)) {
             // set the owning side to null (unless already changed)
-            if ($color->getFeature() === $this) {
-                $color->setFeature(null);
+            if ($color->getFeatures() === $this) {
+                $color->setFeatures(null);
             }
         }
 

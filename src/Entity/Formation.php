@@ -7,6 +7,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use App\Entity\Color;
+use App\Entity\Skill;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FormationRepository::class)]
@@ -53,15 +55,11 @@ class Formation
     private ?color $colors = null;
 
     #[ORM\ManyToMany(targetEntity: skill::class, inversedBy: 'formations')]
-    private Collection $skills;
+    private Collection $skill;
 
     #[ORM\Column]
     #[Assert\NotNull()]
     private ?bool $hidden = null;
-
-    #[ORM\Column]
-    #[Assert\NotNull()]
-    private ?bool $deleted = null;
 
     #[ORM\Column]
     #[Assert\NotNull()]
@@ -73,9 +71,14 @@ class Formation
 
     public function __construct()
     {
-        $this->skills = new ArrayCollection();
+        $this->skill = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function __toString(): string
+    {
+        return $this->getName();
     }
 
     public function getId(): ?int
@@ -180,25 +183,25 @@ class Formation
     }
 
     /**
-     * @return Collection<int, skills>
+     * @return Collection<int, skill>
      */
-    public function getSkills(): Collection
+    public function getSkill(): Collection
     {
-        return $this->skills;
+        return $this->skill;
     }
 
-    public function addSkills(skill $skills): self
+    public function addSkill(skill $skill): self
     {
-        if (!$this->skills->contains($skills)) {
-            $this->skills->add($skills);
+        if (!$this->skill->contains($skill)) {
+            $this->skill->add($skill);
         }
 
         return $this;
     }
 
-    public function removeSkills(skill $skills): self
+    public function removeSkill(skill $skill): self
     {
-        $this->skills->removeElement($skills);
+        $this->skill->removeElement($skill);
 
         return $this;
     }
@@ -211,18 +214,6 @@ class Formation
     public function setHidden(bool $hidden): self
     {
         $this->hidden = $hidden;
-
-        return $this;
-    }
-
-    public function isDeleted(): ?bool
-    {
-        return $this->deleted;
-    }
-
-    public function setDeleted(bool $deleted): self
-    {
-        $this->deleted = $deleted;
 
         return $this;
     }
