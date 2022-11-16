@@ -46,7 +46,7 @@ class CategoryCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return $actions
-            ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
+            ->setPermission(Action::DELETE, 'ROLE_ADMIN')
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
                 return $action->setIcon('fa fa-edit')->setLabel('Modifier');
