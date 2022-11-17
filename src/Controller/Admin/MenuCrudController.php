@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Menu;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -21,18 +22,36 @@ class MenuCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        return [
-            IdField::new('id')
-                ->hideOnForm(),
-            TextField::new('name', 'Nom'),
-            TextField::new('link', 'Lien'),
-            DateTimeField::new('createdAt', 'Date de création')
-                ->hideOnForm(),
-            DateTimeField::new('createdAt', 'Date de modification')
-                ->hideOnForm(),
-            BooleanField::new('actived', 'Activé'),
-            BooleanField::new('hidden', 'Caché'),
-        ];
+        // id du menu
+        $id = IdField::new('id', 'ID')->hideOnForm();
+
+        // Nom du Menu
+        $name = TextField::new('name', 'Nom');
+
+        // Tag de la page
+        $link = TextField::new('link', 'Tag');
+        
+        // Date de création
+        $createdAt = DateTimeField::new('createdAt', 'Date de création')->hideOnForm();
+
+        // Date de modification
+        $updatedAt = DateTimeField::new('updatedAt', 'Date de modification')->hideOnForm();
+
+        // Option pour activer
+        $actived = BooleanField::new('actived', 'Activé');
+
+        // Option pour cacher le menu
+        $hidden = BooleanField::new('hidden', 'Caché');
+
+        if (Crud::PAGE_INDEX === $pageName) {
+            return [$id, $name, $link, $actived, $hidden];
+        } elseif (Crud::PAGE_DETAIL === $pageName) {
+            return [$id, $name, $link, $createdAt, $updatedAt, $actived, $hidden];
+        } elseif (Crud::PAGE_NEW === $pageName) {
+            return [$id, $name, $link, $createdAt, $updatedAt, $actived, $hidden];
+        } elseif (Crud::PAGE_EDIT === $pageName) {
+            return [$id, $name, $link, $createdAt, $updatedAt, $actived, $hidden];
+        }
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -40,6 +59,12 @@ class MenuCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInPlural('Gestion des Menus')
             ->setDefaultSort(['createdAt' => 'DESC'])
+            ->setDateTimeFormat('dd/M/yy hh:mm:ss')
+            ->setDateFormat('d/m/y')
+            ->setPaginatorUseOutputWalkers(true)
+            ->setPaginatorFetchJoinCollection(true)
+            ->setPaginatorPageSize(10)
+            ->setAutofocusSearch()
         ;
     }
 
@@ -49,10 +74,13 @@ class MenuCrudController extends AbstractCrudController
             ->setPermission(Action::DELETE, 'ROLE_ADMIN')
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
-                return $action->setIcon('fa fa-edit')->setLabel('Modifier');
+                return $action->setIcon('fa fa-edit')->setCssClass('btn btn-primary')->setLabel('Modifier');
             })
             ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
-                return $action->setIcon('fa fa-eye')->setLabel('Consulter');
+                return $action->setIcon('fa fa-eye')->setCssClass('btn btn-success')->setLabel('Consulter');
+            })
+            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
+                return $action->setIcon('fa fa-trash')->setCssClass('btn btn-danger')->setLabel('Supprimer');
             })
             ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
                 return $action->setIcon('fa fa-plus')->setLabel(false);
@@ -72,9 +100,15 @@ class MenuCrudController extends AbstractCrudController
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, function (Action $action) {
                 return $action->setIcon('fa fa-save')->setLabel('Enregistrer & Continuer');
             })
-            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, function (Action $action) {
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
                 return $action->setIcon('fa fa-save')->setLabel('Enregistrer');
             })
         ;
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $entityInstance->setUpdatedAt(new \DateTimeImmutable);
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }

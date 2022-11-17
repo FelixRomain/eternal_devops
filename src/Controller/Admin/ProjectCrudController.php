@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Project;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -23,25 +24,51 @@ class ProjectCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        return [
-            IdField::new('id', 'Id')
-                ->hideOnForm(),
-            TextField::new('name', 'Nom'),
-            TextField::new('cover', 'Image de couverture'),
-            TextareaField::new('description', 'Description')
-                ->hideOnIndex(),
-            TextareaField::new('content', 'Contenu')
-                ->hideOnIndex(),
-            DateTimeField::new('startDate', 'Date de début'),
-            DateTimeField::new('endDate', 'Date de fin'),
-            AssociationField::new('categories', 'Catégories'),
-            AssociationField::new('tags', 'Tags'),
-            DateTimeField::new('createdAt', 'Date de création')
-                ->hideOnForm(),
-            DateTimeField::new('createdAt', 'Date de modification')
-                ->hideOnForm(),
-            BooleanField::new('hidden', 'Caché'),
-        ];
+        // id du projet
+        $id = IdField::new('id', 'ID')->hideOnForm();
+
+        // Nom du projet
+        $name = TextField::new('name', 'Nom');
+
+        // Image de couverture
+        $cover = TextField::new('cover', 'Image de couverture');
+
+        // Description du projet
+        $description = TextareaField::new('description', 'Description');
+
+        // Contenu du projet
+        $content = TextareaField::new('content', 'Contenu');
+
+        // Date de début
+        $startDate = DateTimeField::new('startDate', 'Date de début');
+
+        // Date de fin
+        $endDate = DateTimeField::new('endDate', 'Date de fin');
+
+        // Categorie
+        $categorie = AssociationField::new('categories', 'Catégories');
+
+        // Tag
+        $tag = AssociationField::new('tags', 'Tags');
+
+        // Date de création
+        $createdAt = DateTimeField::new('createdAt', 'Date de création')->hideOnForm();
+
+        // Date de modification
+        $updatedAt = DateTimeField::new('updatedAt', 'Date de modification')->hideOnForm();
+
+        // Option pour caché le projet
+        $hidden = BooleanField::new('hidden', 'Caché');
+
+        if (Crud::PAGE_INDEX === $pageName) {
+            return [$id, $name, $cover, $startDate, $endDate, $categorie, $tag, $hidden];
+        } elseif (Crud::PAGE_DETAIL === $pageName) {
+            return [$id, $name, $cover, $description, $content, $startDate, $endDate, $categorie, $tag, $createdAt, $updatedAt, $hidden];
+        } elseif (Crud::PAGE_NEW === $pageName) {
+            return [$id, $name, $cover, $description, $content, $startDate, $endDate, $categorie, $tag, $createdAt, $updatedAt, $hidden];
+        } elseif (Crud::PAGE_EDIT === $pageName) {
+            return [$id, $name, $cover, $description, $content, $startDate, $endDate, $categorie, $tag, $createdAt, $updatedAt, $hidden];
+        }
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -49,6 +76,12 @@ class ProjectCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInPlural('Gestion des Projets')
             ->setDefaultSort(['createdAt' => 'DESC'])
+            ->setDateTimeFormat('dd/M/yy hh:mm:ss')
+            ->setDateFormat('d/m/y')
+            ->setPaginatorUseOutputWalkers(true)
+            ->setPaginatorFetchJoinCollection(true)
+            ->setPaginatorPageSize(10)
+            ->setAutofocusSearch()
         ;
     }
 
@@ -58,10 +91,13 @@ class ProjectCrudController extends AbstractCrudController
             ->setPermission(Action::DELETE, 'ROLE_ADMIN')
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
-                return $action->setIcon('fa fa-edit')->setLabel('Modifier');
+                return $action->setIcon('fa fa-edit')->setCssClass('btn btn-primary')->setLabel('Modifier');
             })
             ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
-                return $action->setIcon('fa fa-eye')->setLabel('Consulter');
+                return $action->setIcon('fa fa-eye')->setCssClass('btn btn-success')->setLabel('Consulter');
+            })
+            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
+                return $action->setIcon('fa fa-trash')->setCssClass('btn btn-danger')->setLabel('Supprimer');
             })
             ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
                 return $action->setIcon('fa fa-plus')->setLabel(false);
@@ -81,9 +117,15 @@ class ProjectCrudController extends AbstractCrudController
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, function (Action $action) {
                 return $action->setIcon('fa fa-save')->setLabel('Enregistrer & Continuer');
             })
-            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, function (Action $action) {
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
                 return $action->setIcon('fa fa-save')->setLabel('Enregistrer');
             })
         ;
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $entityInstance->setUpdatedAt(new \DateTimeImmutable);
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }

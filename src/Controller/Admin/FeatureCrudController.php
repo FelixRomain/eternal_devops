@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Role;
 use App\Entity\Feature;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -27,23 +28,43 @@ class FeatureCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        return [
-            IdField::new('id', 'Id')
-                ->hideOnForm(),
-            TextField::new('name', 'Nom'),
-            DateTimeField::new('createdAt', 'Date de création')
-                ->hideOnForm(),
-            DateTimeField::new('createdAt', 'Date de modification')
-                ->hideOnForm(),
-            BooleanField::new('hidden', 'Caché'),
-        ];
+        // id de la feature
+        $id = IdField::new('id', 'ID')->hideOnForm();
+
+        // Nom de la feature
+        $name = TextField::new('name', 'Nom');
+        
+        // Date de création
+        $createdAt = DateTimeField::new('createdAt', 'Date de création')->hideOnForm();
+
+        // Date de modification
+        $updatedAt = DateTimeField::new('updatedAt', 'Date de modification')->hideOnForm();
+
+        // Option pour caché la feature
+        $hidden = BooleanField::new('hidden', 'Caché');
+
+        if (Crud::PAGE_INDEX === $pageName) {
+            return [$id, $name, $hidden];
+        } elseif (Crud::PAGE_DETAIL === $pageName) {
+            return [$id, $name, $createdAt, $updatedAt, $hidden];
+        } elseif (Crud::PAGE_NEW === $pageName) {
+            return [$id, $name, $createdAt, $updatedAt, $hidden];
+        } elseif (Crud::PAGE_EDIT === $pageName) {
+            return [$id, $name, $createdAt, $updatedAt, $hidden];
+        }
     }
 
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInPlural('Gestion des parties du Back-office')
+            ->setEntityLabelInPlural('Gestion des parties du back-office')
             ->setDefaultSort(['createdAt' => 'DESC'])
+            ->setDateTimeFormat('dd/M/yy hh:mm:ss')
+            ->setDateFormat('d/m/y')
+            ->setPaginatorUseOutputWalkers(true)
+            ->setPaginatorFetchJoinCollection(true)
+            ->setPaginatorPageSize(10)
+            ->setAutofocusSearch()
         ;
     }
 
@@ -53,10 +74,13 @@ class FeatureCrudController extends AbstractCrudController
             ->setPermission(Action::DELETE, 'ROLE_ADMIN')
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
-                return $action->setIcon('fa fa-edit')->setLabel('Modifier');
+                return $action->setIcon('fa fa-edit')->setCssClass('btn btn-primary')->setLabel('Modifier');
             })
             ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
-                return $action->setIcon('fa fa-eye')->setLabel('Consulter');
+                return $action->setIcon('fa fa-eye')->setCssClass('btn btn-success')->setLabel('Consulter');
+            })
+            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
+                return $action->setIcon('fa fa-trash')->setCssClass('btn btn-danger')->setLabel('Supprimer');
             })
             ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
                 return $action->setIcon('fa fa-plus')->setLabel(false);
@@ -76,9 +100,15 @@ class FeatureCrudController extends AbstractCrudController
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, function (Action $action) {
                 return $action->setIcon('fa fa-save')->setLabel('Enregistrer & Continuer');
             })
-            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, function (Action $action) {
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, function (Action $action) {
                 return $action->setIcon('fa fa-save')->setLabel('Enregistrer');
             })
         ;
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $entityInstance->setUpdatedAt(new \DateTimeImmutable);
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }

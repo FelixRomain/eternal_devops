@@ -26,7 +26,7 @@ class DashboardController extends AbstractDashboardController
     #[Route('/admin', name: 'dashboard')]
     public function index(): Response
     {
-        return $this->render('admin/dashboard.html.twig');
+        return $this->render('admin/dashboard/dashboard.html.twig');
     }
 
     public function configureDashboard(): Dashboard
@@ -53,7 +53,8 @@ class DashboardController extends AbstractDashboardController
 
             // you can use any type of menu item, except submenus
             ->addMenuItems([
-                MenuItem::linkToRoute('Aller sur le site', 'fa fa-home', 'route_name', ['routeParamName' => 'homepage']),
+                MenuItem::linkToRoute('Aller sur le site', 'fa fa-home', 'home'),
+                MenuItem::linkToRoute('Authentification', 'fa fa-key', 'app_login'),
             ]);
     }
 
