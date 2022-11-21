@@ -2,6 +2,13 @@
 
 namespace App\Entity;
 
+use App\Entity\Skill;
+use App\Entity\Project;
+use App\Entity\Formation;
+use App\Entity\Experience;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -43,6 +50,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private $plain_password;
 
+    #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotNull()]
+    private ?string $about = null;
+
+    #[ORM\Column]
+    #[Assert\NotNull()]
+    private ?bool $front = null;
+
     #[ORM\Column]
     #[Assert\NotNull()]
     private ?bool $hidden = null;
@@ -55,6 +70,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotNull()]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\ManyToMany(targetEntity: skill::class, inversedBy: 'users')]
+    private Collection $skills;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $filename = null;
+
+    #[ORM\ManyToMany(targetEntity: formation::class, inversedBy: 'users')]
+    private Collection $formations;
+
+    #[ORM\ManyToMany(targetEntity: experience::class, inversedBy: 'users')]
+    private Collection $experiences;
+
+    #[ORM\ManyToMany(targetEntity: project::class, inversedBy: 'users')]
+    private Collection $projects;
+
     /**
      * Constructor
      */
@@ -62,6 +92,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+        $this->skills = new ArrayCollection();
+        $this->formations = new ArrayCollection();
+        $this->experiences = new ArrayCollection();
+        $this->projects = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -171,6 +205,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
+    public function setAbout(string $about): self
+    {
+        $this->about = $about;
+
+        return $this;
+    }
+
+    public function isFront(): ?bool
+    {
+        return $this->front;
+    }
+
+    public function setFront(bool $front): self
+    {
+        $this->front = $front;
+
+        return $this;
+    }
+
     public function isHidden(): ?bool
     {
         return $this->hidden;
@@ -206,4 +259,118 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getAbout(): ?string
+    {
+        return $this->about;
+    }
+
+    /**
+     * @return Collection<int, skill>
+     */
+    public function getSkills(): Collection
+    {
+        return $this->skills;
+    }
+
+    public function addSkill(skill $skill): self
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills->add($skill);
+        }
+
+        return $this;
+    }
+
+    public function removeSkill(skill $skill): self
+    {
+        $this->skills->removeElement($skill);
+
+        return $this;
+    }
+
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+
+    public function setFilename(?string $filename): self
+    {
+        $this->filename = $filename;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, formation>
+     */
+    public function getFormations(): Collection
+    {
+        return $this->formations;
+    }
+
+    public function addFormation(formation $formation): self
+    {
+        if (!$this->formations->contains($formation)) {
+            $this->formations->add($formation);
+        }
+
+        return $this;
+    }
+
+    public function removeFormation(formation $formation): self
+    {
+        $this->formations->removeElement($formation);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, experience>
+     */
+    public function getExperiences(): Collection
+    {
+        return $this->experiences;
+    }
+
+    public function addExperience(experience $experience): self
+    {
+        if (!$this->experiences->contains($experience)) {
+            $this->experiences->add($experience);
+        }
+
+        return $this;
+    }
+
+    public function removeExperience(experience $experience): self
+    {
+        $this->experiences->removeElement($experience);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, project>
+     */
+    public function getProjects(): Collection
+    {
+        return $this->projects;
+    }
+
+    public function addProject(project $project): self
+    {
+        if (!$this->projects->contains($project)) {
+            $this->projects->add($project);
+        }
+
+        return $this;
+    }
+
+    public function removeProject(project $project): self
+    {
+        $this->projects->removeElement($project);
+
+        return $this;
+    }
+
 }

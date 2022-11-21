@@ -3,13 +3,144 @@
 {% block title %}Accueil - Felix Romain{% endblock %}
 
 {% block body %}
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    {% for user in users %}
+        <section class="rf-about" id="rf-about">
+            <div class="container">
+                <div class="row section-separator">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="rf-about-img shadow-2 wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.4s" style="visibility: visible; animation-duration: 0.8s; animation-delay: 0.4s; animation-name: fadeInUp;">
+                            <img src="{{ asset('img/about.png') }}" alt="" class="img-fluid">
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="rf-about-inner">
+                            <h2 class="wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.1s" style="visibility: visible; animation-duration: 0.8s; animation-delay: 0.1s; animation-name: fadeInUp;">À propos de moi</h2>
+                            <p class="wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.2s" style="visibility: visible; animation-duration: 0.8s; animation-delay: 0.2s; animation-name: fadeInUp;">
+                            {{user.about}}</p>
+                            <div class="rf-about-tag wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.3s" style="visibility: visible; animation-duration: 0.8s; animation-delay: 0.3s; animation-name: fadeInUp;">
+                                <ul>
+                            <ul>
+                                {% for skill in user.skills %}
+                                    <li><span>{{skill.name}}</span></li>
+                                {% endfor %}
+                            </ul>
+                                </ul>
+                            </div>
+                            <a href="uploads/{{user.filename}}" target="_blank" class="btn btn-fill wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.4s" style="visibility: visible; animation-duration: 0.8s; animation-delay: 0.4s; animation-name: fadeInUp;">Télécharger le CV<i class="fa fa-download"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/Developpement/perso/eternal_devops/src/Controller/HomeController.php'|file_link(0) }}">src/Controller/HomeController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/Developpement/perso/eternal_devops/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
-    </ul>
-</div>
+        <section class="rf-experince image-bg featured-img-one" id="rf-experience">
+            <div class="img-color-overlay">
+                <div class="container">
+                    <div class="row section-separator">
+                        <div class="col-sm-12 col-md-6">
+                            <div class="rf-education">
+                                <h3 class="wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.2s" style="visibility: visible; animation-duration: 0.8s; animation-delay: 0.2s; animation-name: fadeInUp;">Formation</h3>
+                                <div class="rf-education-deatils">
+                                    <!-- Education Institutes-->
+                                    {% for formation in user.formations %}
+                                        {% if formation.hidden == 0 %}
+                                            <div class="rf-education-item dark-bg wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.3s" style="visibility: visible; animation-duration: 0.8s; animation-delay: 0.3s; animation-name: fadeInUp;">
+                                                <h4>{{formation.name}} / <a target="_blank" href="{{formation.link}}">{{formation.school}}</a></h4>
+                                                {% if formation.actually == 1 %}
+                                                    <div class="eduyear">{{formation.startDate|date("M Y")}} - aujourd’hui</div>
+                                                {% else %}
+                                                    <div class="eduyear">{{formation.startDate|date("M Y")}}-{{formation.endDate|date("D Y")}}</div>
+                                                {% endif %}
+                                                {{formation.description|raw}}
+                                            </div>  
+                                        {% endif %} 
+                                    {% endfor %}                                
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div class="rf-work">
+                                 <h3>Expérience</h3>
+                                <div class="rf-experience-deatils">
+                                    <!-- Education Institutes-->
+                                    {% for experience in user.experiences %}
+                                        {% if experience.hidden == 0 %}
+                                            <div class="rf-work-item dark-bg wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.4s" style="visibility: visible; animation-duration: 0.8s; animation-delay: 0.4s; animation-name: fadeInUp;">
+                                                <h4>{{experience.name}} / <a target="_blank" href="{{experience.link}}">{{experience.company}}</a></h4>
+                                                {% if experience.actually == 1 %}
+                                                    <div class="eduyear">{{experience.startDate|date("M Y")}} - aujourd’hui</div>
+                                                {% else %}
+                                                    <div class="eduyear">{{experience.startDate|date("M Y")}}-{{experience.endDate|date("D Y")}}</div>
+                                                {% endif %}
+                                                {{experience.description|raw}}
+                                            </div>
+                                        {% endif %} 
+                                    {% endfor %}                               
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="rf-skills" id="rf-skills">
+            <div class="home-v-img">
+                <div class="container">
+                    <div class="row section-separator">
+                        <div class="section-title text-center col-sm-12">
+                            <h2>Compétences</h2>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div class="rf-skills-inner">
+                                <div class="rf-professional-skill wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.3s" style="visibility: visible; animation-duration: 0.8s; animation-delay: 0.3s; animation-name: fadeInUp;">
+                                    <h3>Technique</h3>
+                                    <div class="each-skills">
+                                        {% for skill in user.skills %}
+                                            {% if skill.place == 'ct' %}
+                                                <div class="candidatos">
+                                                    <div class="parcial">
+                                                        <div class="info">
+                                                            <div class="nome">{{skill.name}}</div>
+                                                            <div class="percentagem-num">{{skill.percentage}}%</div>
+                                                        </div>
+                                                        <div class="progressBar">
+                                                            <div class="percentagem" style="width: {{skill.percentage}}%;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-6">
+                            <div class="rf-professional-skills wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.5s" style="visibility: visible; animation-duration: 0.8s; animation-delay: 0.5s; animation-name: fadeInUp;">
+                                <h3>Environnement</h3>
+                                <ul class="professional-progress">
+                                    {% for skill in user.skills %}
+                                        {% if skill.place == 'et' %}
+                                            <div class="candidatos">
+                                                <div class="parcial">
+                                                    <div class="info">
+                                                        <div class="nome">{{skill.name}}</div>
+                                                        <div class="percentagem-num">{{skill.percentage}}%</div>
+                                                    </div>
+                                                    <div class="progressBar">
+                                                        <div class="percentagem" style="width: {{skill.percentage}}%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endfor %}
 {% endblock %}
+ 

@@ -10,9 +10,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -51,6 +54,28 @@ class UserCrudController extends AbstractCrudController
             ->setFormType(PasswordType::class)
             ->setRequired($pageName === Crud::PAGE_NEW)
             ->onlyOnForms();
+        
+        // Description de la personne
+        $about = TextareaField::new('about', 'Description');
+
+        // CV de la personne
+        $fileName = ImageField::new('filename', 'Télécharger le CV')
+            ->setBasePath(' uploads/')
+            ->setUploadDir('public/uploads')
+            ->setUploadedFileNamePattern('[randomhash].[extension]')
+            ->setRequired(false);
+
+        // Compétence de l'utilisateur
+        $skill = AssociationField::new('skills', 'Compétences');
+
+        // Formation de l'utilisateur
+        $formation = AssociationField::new('formations', 'Formations');
+
+        // Expérience de l'utilisateur
+        $experience = AssociationField::new('experiences', 'Expériences');
+
+        // Projet de l'utilisateur
+        $project = AssociationField::new('projects', 'Projets');
 
         // Date de création
         $createdAt = DateTimeField::new('createdAt', 'Date de création')->hideOnForm();
@@ -58,17 +83,20 @@ class UserCrudController extends AbstractCrudController
         // Date de modification
         $updatedAt = DateTimeField::new('updatedAt', 'Date de modification')->hideOnForm();
 
+        // Option pour afficher l'utilisateur en Front
+        $front = BooleanField::new('front', 'Principal');
+
         // Option pour caché l'utilisateur
         $hidden = BooleanField::new('hidden', 'Caché');
 
         if (Crud::PAGE_INDEX === $pageName) {
-            return [$id, $fullName, $email, $roles, $createdAt, $updatedAt, $hidden];
+            return [$id, $fullName, $email, $roles, $createdAt, $updatedAt, $front, $hidden];
         } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$id, $fullName, $email, $roles, $password, $createdAt, $updatedAt, $hidden];
+            return [$id, $fullName, $email, $roles, $password, $about, $fileName, $formation, $experience, $skill, $project, $createdAt, $updatedAt, $front, $hidden];
         } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$id, $fullName, $email, $roles, $password, $createdAt, $updatedAt, $hidden];
+            return [$id, $fullName, $email, $roles, $password, $about, $fileName, $formation, $experience, $skill, $project, $createdAt, $updatedAt, $front, $hidden];
         } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$id, $fullName, $email, $roles, $password, $createdAt, $updatedAt, $hidden];
+            return [$id, $fullName, $email, $roles, $password, $about, $fileName, $formation, $experience, $skill, $project, $createdAt, $updatedAt, $front, $hidden];
         }
     }
 

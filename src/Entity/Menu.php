@@ -27,6 +27,10 @@ class Menu
 
     #[ORM\Column]
     #[Assert\NotNull()]
+    private ?int $ordered = null;
+
+    #[ORM\Column]
+    #[Assert\NotNull()]
     private ?bool $actived = null;
 
     #[ORM\Column]
@@ -77,6 +81,18 @@ class Menu
     public function setLink(string $link): self
     {
         $this->link = $link;
+
+        return $this;
+    }
+
+    public function getOrdered(): ?int
+    {
+        return $this->ordered;
+    }
+
+    public function setOrdered(int $ordered): self
+    {
+        $this->ordered = $ordered;
 
         return $this;
     }

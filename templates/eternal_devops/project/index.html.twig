@@ -1,0 +1,31 @@
+{% extends 'eternal_devops/base.html.twig' %}
+
+{% block title %}Mes projets - Felix Romain{% endblock %}
+
+{% block body %}
+    {% for user in users %}
+    <section class="rf-blog image-bg" id="rf-blog">
+        <div class="container">
+            <div class="row section-separator">
+                {% for project in user.projects %}
+                    <div class="col-sm-12 col-md-4">
+                            <div class="rf-blog-item dark-bg wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.3s" style="visibility: visible; animation-duration: 0.8s; animation-delay: 0.3s; animation-name: fadeInUp;">
+                            <img src="uploads/{{project.cover}}" alt="" class="img-fluid">
+                            <div class="blog-inner">
+                                <h2><a href="blog-single.html">{{ project.name }}</a></h2>
+                                <div class="rf-blog-post-info">
+                                    <ul>
+                                        <li><strong>Publié le</strong>{{ project.createdAt|date('d/m/Y')}}</li>
+                                    </ul>
+                                </div>
+                                <p>{{ project.description|raw }}</p>
+                                <a href="blog-single.html">Voir +</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endfor %}
+{% endblock %}

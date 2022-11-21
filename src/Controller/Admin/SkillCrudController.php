@@ -9,7 +9,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -28,9 +30,20 @@ class SkillCrudController extends AbstractCrudController
 
         // Nom de la compétence
         $name = TextField::new('name', 'Nom');
+
+        // Nom de la compétence
+        $percentage = IntegerField::new('percentage', 'Pourcentage');
+
+        // Place sur le Front
+        $place = ChoiceField::new('place', 'Place')
+        ->setChoices(['Compétence technique' => 'ct', 'Environnement technique' => 'et'])
+        ->allowMultipleChoices(false);
         
         // Couleur
         $color = AssociationField::new('colors', 'Couleur');
+
+        // Utilisateur  associé à la compétence
+        $user = AssociationField::new('users', 'utilisateurs associé à la compétence');
 
         // Date de création
         $createdAt = DateTimeField::new('createdAt', 'Date de création')->hideOnForm();
@@ -42,13 +55,13 @@ class SkillCrudController extends AbstractCrudController
         $hidden = BooleanField::new('hidden', 'Caché');
 
         if (Crud::PAGE_INDEX === $pageName) {
-            return [$id, $name, $color, $hidden];
+            return [$id, $name, $percentage, $place, $color, $hidden];
         } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$id, $name, $color, $createdAt, $updatedAt, $hidden];
+            return [$id, $name, $percentage, $place, $color, $user, $createdAt, $updatedAt, $hidden];
         } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$id, $name, $color, $createdAt, $updatedAt, $hidden];
+            return [$id, $name, $percentage, $place, $color, $user, $createdAt, $updatedAt, $hidden];
         } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$id, $name, $color, $createdAt, $updatedAt, $hidden];
+            return [$id, $name, $percentage, $place, $color, $user, $createdAt, $updatedAt, $hidden];
         }
     }
 

@@ -35,6 +35,10 @@ class Experience
     #[Assert\Length(min: 2, max: 100)]
     private ?string $place = null;
 
+    #[ORM\Column(length: 255)]
+    #[Assert\NotNull()]
+    private ?string $link = null;
+
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotNull()]
     private ?\DateTimeInterface $startDate = null;
@@ -69,11 +73,15 @@ class Experience
     #[Assert\NotNull()]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'experiences')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->skill = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+        $this->users = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -118,6 +126,18 @@ class Experience
     public function setPlace(string $place): self
     {
         $this->place = $place;
+
+        return $this;
+    }
+
+    public function getLink(): ?string
+    {
+        return $this->link;
+    }
+
+    public function setLink(string $link): self
+    {
+        $this->link = $link;
 
         return $this;
     }
@@ -238,6 +258,33 @@ class Experience
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addExperience($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeExperience($this);
+        }
 
         return $this;
     }

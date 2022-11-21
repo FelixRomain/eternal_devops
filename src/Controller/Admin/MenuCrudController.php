@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
@@ -30,6 +31,9 @@ class MenuCrudController extends AbstractCrudController
 
         // Tag de la page
         $link = TextField::new('link', 'Tag');
+
+        // Ordre du menu
+        $ordered = IntegerField::new('ordered', 'Ordre');
         
         // Date de création
         $createdAt = DateTimeField::new('createdAt', 'Date de création')->hideOnForm();
@@ -44,13 +48,13 @@ class MenuCrudController extends AbstractCrudController
         $hidden = BooleanField::new('hidden', 'Caché');
 
         if (Crud::PAGE_INDEX === $pageName) {
-            return [$id, $name, $link, $actived, $hidden];
+            return [$id, $name, $link, $ordered, $actived, $hidden];
         } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$id, $name, $link, $createdAt, $updatedAt, $actived, $hidden];
+            return [$id, $name, $link, $ordered, $createdAt, $updatedAt, $actived, $hidden];
         } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$id, $name, $link, $createdAt, $updatedAt, $actived, $hidden];
+            return [$id, $name, $link, $ordered,$createdAt, $updatedAt, $actived, $hidden];
         } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$id, $name, $link, $createdAt, $updatedAt, $actived, $hidden];
+            return [$id, $name, $link, $ordered, $createdAt, $updatedAt, $actived, $hidden];
         }
     }
 

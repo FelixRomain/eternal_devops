@@ -4,17 +4,17 @@ namespace App\Controller;
 
 use App\Entity\Menu;
 use App\Entity\User;
-use App\Entity\Skill;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class HomeController extends AbstractController
+class ProjectController extends AbstractController
 {
-    #[Route('/', name: 'home')]
+    #[Route('/project', name: 'project')]
     public function index(EntityManagerInterface $em): Response
     {
+
         // Récupération des Menus non caché
         $repository = $em->getRepository(Menu::class);
         $menus = $repository->findBy(
@@ -27,10 +27,10 @@ class HomeController extends AbstractController
         $users = $repository->findBy(
             ['front' => '1'],
         );    
-          
-        return $this->render('eternal_devops/home/index.html.twig', [
-            'controller_name' => 'HomeController',
-            'title' => 'Felix Romain',
+
+        return $this->render('eternal_devops/project/index.html.twig', [
+            'controller_name' => 'ProjectController',
+            'title' => 'Mes projets',
             'menus' => $menus,
             'users' => $users,
         ]);

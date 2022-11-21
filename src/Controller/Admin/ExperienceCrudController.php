@@ -11,7 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
@@ -36,8 +36,11 @@ class ExperienceCrudController extends AbstractCrudController
         // Localisation
         $place = TextField::new('place', 'Ville');
 
+        // URL de l'entreprise
+        $link = TextField::new('link', 'Site');
+
         // Description de l'expérience
-        $description = TextareaField::new('description', 'Description');
+        $description = TextEditorField::new('description', 'Description');
 
         // Date de début
         $startDate = DateTimeField::new('startDate', 'Date de début');
@@ -64,13 +67,13 @@ class ExperienceCrudController extends AbstractCrudController
         $hidden = BooleanField::new('hidden', 'Caché');
 
         if (Crud::PAGE_INDEX === $pageName) {
-            return [$id, $name, $company, $place, $startDate, $endDate, $color, $actually, $hidden];
+            return [$id, $name, $company, $place, $link, $startDate, $endDate, $color, $actually, $hidden];
         } elseif (Crud::PAGE_DETAIL === $pageName) {
-            return [$id, $name, $company, $place, $description, $startDate, $endDate, $skill, $color, $createdAt, $updatedAt, $actually, $hidden];
+            return [$id, $name, $company, $place, $link, $description, $startDate, $endDate, $skill, $color, $createdAt, $updatedAt, $actually, $hidden];
         } elseif (Crud::PAGE_NEW === $pageName) {
-            return [$id, $name, $company, $place, $description, $startDate, $endDate, $skill, $color, $createdAt, $updatedAt, $actually, $hidden];
+            return [$id, $name, $company, $place, $link, $description, $startDate, $endDate, $skill, $color, $createdAt, $updatedAt, $actually, $hidden];
         } elseif (Crud::PAGE_EDIT === $pageName) {
-            return [$id, $name, $company, $place, $description, $startDate, $endDate, $skill, $color, $createdAt, $updatedAt, $actually, $hidden];
+            return [$id, $name, $company, $place, $link, $description, $startDate, $endDate, $skill, $color, $createdAt, $updatedAt, $actually, $hidden];
         }
     }
 

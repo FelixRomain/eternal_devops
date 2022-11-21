@@ -23,6 +23,15 @@ class Skill
     #[Assert\Length(min: 2, max: 30)]
     private ?string $name = null;
 
+    #[ORM\Column]
+    #[Assert\NotNull()]
+    private ?int $percentage = null;
+
+    #[ORM\Column(length: 2)]
+    #[Assert\Length(min: 1, max: 2)]
+    #[Assert\NotNull()]
+    private ?string $place = null;
+
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?color $colors = null;
 
@@ -44,12 +53,16 @@ class Skill
     #[ORM\ManyToMany(targetEntity: Formation::class, mappedBy: 'skill')]
     private Collection $formations;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'skills')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
         $this->experiences = new ArrayCollection();
         $this->formations = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -70,6 +83,30 @@ class Skill
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getPercentage(): ?int
+    {
+        return $this->percentage;
+    }
+
+    public function setPercentage(int $percentage): self
+    {
+        $this->percentage = $percentage;
+
+        return $this;
+    }
+
+    public function getPlace(): ?string
+    {
+        return $this->place;
+    }
+
+    public function setPlace(?string $place): self
+    {
+        $this->place = $place;
 
         return $this;
     }
@@ -171,6 +208,33 @@ class Skill
     {
         if ($this->formations->removeElement($formations)) {
             $formations->removeSkill($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addSkill($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeSkill($this);
         }
 
         return $this;

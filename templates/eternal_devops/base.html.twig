@@ -3,16 +3,71 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Eternal Devops{% endblock %}</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
-
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+            <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/responsive.css') }}">
+        {% block stylesheets %}{% endblock %}
     </head>
-    <body>
-        {% block body %}{% endblock %}
+    <body class="dark-vertion black-bg">
+        <div class="section-loader" style="display: none;">
+            <div class="loader">
+                <div></div>
+                <div></div> 
+            </div>
+        </div>
+        <header class="black-bg rf-header rf-fixed-nav rf-xs-mobile-nav" id="rf-header">
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="row">
+                    <nav class="navbar navbar-expand-lg rf-nav nav-btn">
+                        <a class="navbar-brand" href="{{path('home')}}">
+                            <h2>Eternal Devops</h2>
+                        </a>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav mr-0 ml-auto">
+                                {% for menu in menus %}
+                                    {% if menu.actived == 1 %}
+                                        <li class="nav-item active">
+                                            <a class="nav-link" href="{{ path(menu.link) }}">{{ menu.name }}</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ path(menu.link) }}">{{ menu.name }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </header>
+        <section class="rf-home image-bg home-2-img" id="rf-home">
+            <div class="img-foverlay img-color-overlay">
+                <div class="container">
+                    <div class="row section-separator xs-column-reverse vertical-middle-content home-padding">
+                        <div class="rf-header-info">
+                            <div class="bannerText container">
+                                <h1>{{ title }}</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% block body %}
+
+        {% endblock %}
+        <footer class="py-3 my-4">
+            <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+                {% for menu in menus %}
+                    <li class="nav-item"><a href="{{path(menu.link)}}" class="nav-link px-2 text-muted">{{menu.name}}</a></li>
+                {% endfor %}
+            </ul>
+            <p class="text-center text-muted">© 2022 Eternal Devops</p>
+        </footer>
+
+        {% block javascripts %}{% endblock %}
+        <script src="{{ asset('js/scripts.js') }}"></script>
     </body>
 </html>
