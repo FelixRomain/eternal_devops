@@ -74,6 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $skills;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\isNull()]
     private ?string $filename = null;
 
     #[ORM\ManyToMany(targetEntity: formation::class, inversedBy: 'users')]
@@ -169,7 +170,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
 

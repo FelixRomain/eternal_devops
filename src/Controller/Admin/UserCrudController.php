@@ -63,7 +63,7 @@ class UserCrudController extends AbstractCrudController
             ->setBasePath(' uploads/')
             ->setUploadDir('public/uploads')
             ->setUploadedFileNamePattern('[randomhash].[extension]')
-            ->setRequired(false);
+            ->setRequired(true);
 
         // Compétence de l'utilisateur
         $skill = AssociationField::new('skills', 'Compétences');
@@ -163,6 +163,14 @@ class UserCrudController extends AbstractCrudController
         $this->encodePassword($entityInstance);
         $entityInstance->setUpdatedAt(new \DateTimeImmutable);
         parent::updateEntity($entityManager, $entityInstance);
+    }
+
+    public function createEntity(string $entityFqcn)
+    {
+        $user = new User();
+        $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPlainPassword()));
+
+        return $user;
     }
 
     private function encodePassword(User $user)
